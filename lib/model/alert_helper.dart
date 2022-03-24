@@ -1,5 +1,9 @@
  import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttersocial/custom_widget/my_textField.dart';
+import 'package:fluttersocial/model/Member.dart';
+import 'package:fluttersocial/util/constants.dart';
+import 'package:fluttersocial/util/firebase_handler.dart';
 
  class AlertHelper {
 
@@ -16,6 +20,84 @@ import 'package:flutter/material.dart';
          }
      );
    }
+   //deconx
+   Future<void>? disconnect(BuildContext context) async{
+     bool isiOS = (Theme.of(context).platform == TargetPlatform.iOS);
+
+     Text title = Text("Voulez vous vraiment déconnecter?");
+      return showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext ctx) {
+           return (isiOS)
+               ? CupertinoAlertDialog(title: title, actions: [close(context, "Non"), disconnectBtn(context)])
+               : AlertDialog(title: title, actions: [close(context, "Non"), disconnectBtn(context)], );
+          });
+   }
+   //alert pour description change user desc alert
+   Future<void> changeUser(
+       BuildContext context  ,{
+         required Member member,
+         required TextEditingController name,
+         required TextEditingController surname,
+         required TextEditingController desc
+           }
+       ) async {
+
+     MyTextField nameTF=   MyTextField(controller: name, hint: member.name,);
+     MyTextField surnameTF= MyTextField(controller: surname, hint: member.surname,);
+     MyTextField descTF= MyTextField(controller: desc, hint:member.description ?? "Aucune description" );
+        Text text =  Text("Modification des donnees");
+         return showDialog(
+             context: context,
+             builder: (BuildContext ctx) {
+                return AlertDialog(
+                  title: text ,
+                  backgroundColor: Colors.white70,
+                  content: Column(
+
+                    children: [nameTF,surnameTF,descTF],
+                  ),
+                  actions: [
+                    close((context), "Annuler"),
+                  TextButton(
+               child: Text("valider"),
+                    onPressed: () {
+                     Map<String, dynamic> datas = {};
+                     if(name.text != null && name.text != ""){
+                       datas[nameKey] = name.text;
+                     }
+                     if(surname.text != null && surname.text !="") {
+                       datas[surnameKey] = surname.text;
+                     }
+               if(desc.text != null && desc.text !="") {
+                 datas[descriptionKey] = desc.text;
+
+               }
+               //modifier
+               FirebaseHandler().modifyMember(datas, member.uid);
+               //si modifier en ferme la fenetre
+                     Navigator.pop(context);
+
+               },
+               )
+                  ]
+                );
+      });
+   }
+   //alert pour deconx
+   TextButton disconnectBtn(BuildContext context){
+     return TextButton(
+       //logout
+         onPressed: (){
+           Navigator.pop(context);
+           FirebaseHandler().logOut();
+         },
+         child: Text("Oui"));
+   }
+
+
+   
   TextButton close(BuildContext context, String string){
     return TextButton(
         onPressed:(() => Navigator.pop(context)), child: Text(string)

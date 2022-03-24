@@ -50,7 +50,7 @@ class MainController extends StatefulWidget {
    Widget build(BuildContext context) {
      return Scaffold(
        key: _globalKey,
-       appBar: AppBar(title: Text("salut"),),
+      // appBar: AppBar(title: Text("salut"),),
        body: showPage(),
        bottomNavigationBar: BottomAppBar(
          color: ColorTheme().accent(),

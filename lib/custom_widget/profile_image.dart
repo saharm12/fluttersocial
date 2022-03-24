@@ -9,6 +9,7 @@ class ProfileImage extends InkWell {
     required String? urlString,
     required VoidCallback onPressed,
     double imageSize: 20
+
   }): super(
       onTap: onPressed,
       child: (urlString != null && urlString != "")
@@ -20,7 +21,9 @@ class ProfileImage extends InkWell {
           backgroundColor: ColorTheme().base(),
           radius: imageSize,
           backgroundImage: AssetImage(logoImage)
+
       )
+
   );
 
 }
