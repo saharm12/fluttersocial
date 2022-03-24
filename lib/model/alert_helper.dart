@@ -1,7 +1,9 @@
  import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersocial/custom_widget/my_textField.dart';
+import 'package:fluttersocial/custom_widget/post_content.dart';
 import 'package:fluttersocial/model/Member.dart';
+import 'package:fluttersocial/model/post.dart';
 import 'package:fluttersocial/util/constants.dart';
 import 'package:fluttersocial/util/firebase_handler.dart';
 
@@ -34,6 +36,36 @@ import 'package:fluttersocial/util/firebase_handler.dart';
                : AlertDialog(title: title, actions: [close(context, "Non"), disconnectBtn(context)], );
           });
    }
+   Future<void> writeAcomment(BuildContext context, {required Post post, required TextEditingController commentController, required member}) async{
+     MyTextField commentTextField = MyTextField(controller: commentController , hint: "Ecrivez un commentaire");
+     Text title = Text(" Nouveau commentaires");
+     return  showDialog(context: context, builder: (BuildContext ctx) {
+       return AlertDialog(
+             title: title,
+             content: SingleChildScrollView (
+               child:   Column (
+                 children: [
+                   PostContent(post: post,  member: member, onPressed: (){}),
+                   commentTextField
+                 ],
+               ),
+             ),
+          actions: [
+            close(context, "Annuler"),
+            TextButton(
+                onPressed: (){
+                  if (commentController.text != null && commentController.text != ""){
+                     FirebaseHandler().addComent(post, commentController.text);
+                     Navigator.pop(context);
+                  }
+                },
+                child: Text("Valider"))
+          ],
+       );
+     });
+   }
+
+
    //alert pour description change user desc alert
    Future<void> changeUser(
        BuildContext context  ,{
@@ -103,4 +135,7 @@ import 'package:fluttersocial/util/firebase_handler.dart';
         onPressed:(() => Navigator.pop(context)), child: Text(string)
     );
   }
+
+
+
  }

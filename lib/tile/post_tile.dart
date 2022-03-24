@@ -3,8 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersocial/custom_widget/padding_with.dart';
+import 'package:fluttersocial/custom_widget/post_content.dart';
 import 'package:fluttersocial/custom_widget/profile_image.dart';
 import 'package:fluttersocial/model/Member.dart';
+import 'package:fluttersocial/model/alert_helper.dart';
 import 'package:fluttersocial/model/post.dart';
 import 'package:fluttersocial/util/constants.dart';
 import 'package:fluttersocial/util/date_handler.dart';
@@ -28,38 +30,8 @@ class PostTile extends StatelessWidget{
         elevation: 5,
           child: Column(
             children: [
-              Row(
-                 children: [
-                   ProfileImage(urlString: member?.imageUrl, onPressed : (){}),
-                   Column(
-                     children: [
-                       Text("${member?.surname} ${member?.name}"),
-                     Text(DateHandler().myDate(post.date!))
-                     ],
-
-                   )
-                 ],
-              ),
-              Divider(),
-                (post.imageUrl != "null" && post.imageUrl != "")
-                     ? PaddingWith(
-                    child: Container (
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      height: MediaQuery.of(context).size.width * 0.85,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        image: DecorationImage(
-                         image: CachedNetworkImageProvider(post.imageUrl!),
-                            fit: BoxFit.cover,
-
-                        )
-                      ),
-                    )
-                )
-                    : Container(height: 0, width: 0,),
-              (post.text != null && post.text != "")
-                  ? Text(post.text!)
-                  :  Container(height: 0, width: 0,),
+          
+            PostContent(post: post, member: member, onPressed: onPressed),
               Divider(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -68,12 +40,17 @@ class PostTile extends StatelessWidget{
                       color: Colors.red,
                       icon: (post.likes!.contains(member?.uid) ? likeIcon : unlikeIcon ),
                     onPressed: () {
-                      FirebaseHandler().addOrRemoveLike(post, member!.uid);
+                        //c'est l'utlisateur qui va liker
+                      FirebaseHandler().addOrRemoveLike(post, FirebaseHandler().authInstance.currentUser!.uid);
                     }),
 
                   Text("${post.likes?.length} likes"),
-                  IconButton(onPressed: null, icon: commentIcon),
+                  IconButton( icon: commentIcon,onPressed: (){
+                   // color: Colors.red;
+                    AlertHelper().writeAcomment(context, post: post, commentController: TextEditingController(), member: member);
+                  },),
                   Text("${post.comments?.length} commentaires")
+
 
                 ],
               )

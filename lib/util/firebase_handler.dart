@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as storage;
+import 'package:fluttersocial/model/Member.dart';
+import 'package:fluttersocial/model/member_comment.dart';
 import 'package:fluttersocial/model/post.dart';
 import 'package:fluttersocial/util/constants.dart';
 
@@ -87,6 +89,7 @@ class FirebaseHandler {
     String urlString = await snapshot.ref.getDownloadURL();
     return urlString;
   }
+  //like
    addOrRemoveLike(Post post, String memberId){
     //mettre a jour la cle 
     if (post.likes!.contains(memberId)){
@@ -97,7 +100,30 @@ class FirebaseHandler {
       //Ajouter notification a aime le post
     }
    }
-  
+  addOrRemoveFollow(Member member ) {
+    String myId = authInstance.currentUser!.uid;
+    DocumentReference myRef = fire_user.doc(myId);
+    print("Member ref = ${member.ref}");
+    print("Me ref = ${myRef}");
+    if (member.followers.contains(myId)) {
+      member.ref.update({followersKey: FieldValue.arrayRemove([myId])});
+      //supprimer user de follow
+      myRef.update({followingKey: FieldValue.arrayRemove([member.uid])});
+    } else {
+      member.ref.update({followersKey: FieldValue.arrayUnion([myId])});
+      myRef.update({followingKey: FieldValue.arrayUnion([member.uid])});
+    }
+  }
+   addComent(Post post, String text) {
+       Map<String,dynamic>  map ={
+         uidKey: authInstance.currentUser?.uid,
+         dateKey: DateTime.now().millisecondsSinceEpoch,
+         textKey: text
+       };
+       post.ref.update({commentKey: FieldValue.arrayUnion([map]) });
+
+   }
+
   Stream<QuerySnapshot<Map<String, dynamic>>> postFrom(String uid) {
     return fire_user.doc(uid).collection("post").snapshots();
   }

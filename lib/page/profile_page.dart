@@ -101,7 +101,7 @@ class ProfileState extends State<ProfilePage> {
 
            ],
          )
-             : ProfileImage(urlString: widget.member?.imageUrl, onPressed: (() => takePicture()), imageSize: 20,),
+             : ProfileImage(urlString: widget.member?.imageUrl, onPressed: (() => takePicture()), imageSize: 30,),
          background: Container(
            decoration: BoxDecoration(
              image: DecorationImage(
