@@ -36,6 +36,7 @@ import 'package:fluttersocial/util/firebase_handler.dart';
                : AlertDialog(title: title, actions: [close(context, "Non"), disconnectBtn(context)], );
           });
    }
+   //ecrire un nouveau commentaire
    Future<void> writeAcomment(BuildContext context, {required Post post, required TextEditingController commentController, required member}) async{
      MyTextField commentTextField = MyTextField(controller: commentController , hint: "Ecrivez un commentaire");
      Text title = Text(" Nouveau commentaires");

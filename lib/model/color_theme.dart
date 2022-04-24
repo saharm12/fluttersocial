@@ -20,6 +20,7 @@ class ColorTheme {
   Color base() => (isDarkMode()) ? Color.fromRGBO(33, 33, 33, 1) : Colors.white;
   Color accent() => (isDarkMode()) ? Colors.grey : Colors.grey;
   Color textColor() => (isDarkMode()) ? Colors.white: Colors.black;
+  Color lightBlue() => Colors.lightBlueAccent;
 
 }
 

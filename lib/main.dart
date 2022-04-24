@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersocial/controller/auth_controller.dart';
+import 'package:fluttersocial/model/color_theme.dart';
 
 import 'controller/main_controller.dart';
 
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
 
         primarySwatch: Colors.blue,
+        //scaffoldBackgroundColor: ColorTheme().pointer()
       ),
       home: StreamBuilder<User?>(
         stream:  FirebaseAuth.instance.userChanges(),

@@ -4,8 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersocial/model/Member.dart';
+import 'package:fluttersocial/model/alert_helper.dart';
 import 'package:fluttersocial/model/color_theme.dart';
 import 'package:fluttersocial/model/post.dart';
+import 'package:fluttersocial/page/notifiaction_page.dart';
 import 'package:fluttersocial/tile/post_tile.dart';
 import 'package:fluttersocial/util/constants.dart';
 import 'package:fluttersocial/util/firebase_handler.dart';
@@ -44,6 +46,7 @@ class HomeState extends State<HomePage> {
        headerSliverBuilder: (BuildContext context, bool scrolled){
          return [
             SliverAppBar(
+
               pinned: true,
               expandedHeight: 200,
               backgroundColor: ColorTheme().pointer(),

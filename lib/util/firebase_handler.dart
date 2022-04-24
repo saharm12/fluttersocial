@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as storage;
 import 'package:fluttersocial/model/Member.dart';
+import 'package:fluttersocial/model/inside_notif.dart';
 import 'package:fluttersocial/model/member_comment.dart';
 import 'package:fluttersocial/model/post.dart';
 import 'package:fluttersocial/util/constants.dart';
@@ -52,12 +53,15 @@ class FirebaseHandler {
   static final firestoreInstance = FirebaseFirestore.instance;
   final fire_user = firestoreInstance.collection(memberRef);
   final fire_notif = firestoreInstance.collection("notification");
-   //storage
+
+
+  //storage
   static final storageRef = storage.FirebaseStorage.instance.ref();
 
   addUserToFirebase(Map<String, dynamic> map){
 
     fire_user.doc(map[uidKey]).set(map);
+
   }
 
   addPosttoFirebase(String memberId, String text, File file) async {
@@ -98,6 +102,9 @@ class FirebaseHandler {
     } else {
       post.ref.update({likeKey: FieldValue.arrayUnion([memberId]) });
       //Ajouter notification a aime le post
+       sendNotifTo(post.memberId!, authInstance.currentUser!.uid, "A aimé votre post", post.ref, "Like");
+
+
     }
    }
   addOrRemoveFollow(Member member ) {
@@ -109,9 +116,13 @@ class FirebaseHandler {
       member.ref.update({followersKey: FieldValue.arrayRemove([myId])});
       //supprimer user de follow
       myRef.update({followingKey: FieldValue.arrayRemove([member.uid])});
+
     } else {
       member.ref.update({followersKey: FieldValue.arrayUnion([myId])});
       myRef.update({followingKey: FieldValue.arrayUnion([member.uid])});
+       //notif
+      sendNotifTo(member.uid, authInstance.currentUser!.uid, "Vous suit désormais", fire_user.doc(authInstance.currentUser!.uid), "follow");
+
     }
   }
    addComent(Post post, String text) {
@@ -121,10 +132,27 @@ class FirebaseHandler {
          textKey: text
        };
        post.ref.update({commentKey: FieldValue.arrayUnion([map]) });
-
+       sendNotifTo(post.memberId!, authInstance.currentUser!.uid, "A commenté votre post", post.ref, "commentaire");
+   }
+   sendNotifTo(String to, String from, String text,DocumentReference ref, String type){
+    bool seen = false;
+    int date = DateTime.now().millisecondsSinceEpoch;
+     Map<String, dynamic> map = {
+       seenKey: seen,
+       dateKey: date,
+       textKey: text,
+       refKey: ref,
+       typeKey: type,
+       uidKey: from
+     };
+     fire_notif.doc(to).collection("InsideNotif").add(map);
+   }
+     
+   seenNotif(InsideNotif notif){
+    notif.reference!.update({seenKey: true});
    }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> postFrom(String uid) {
+   Stream<QuerySnapshot<Map<String, dynamic>>> postFrom(String uid) {
     return fire_user.doc(uid).collection("post").snapshots();
   }
    //modifier iamge

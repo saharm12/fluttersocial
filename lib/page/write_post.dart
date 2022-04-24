@@ -122,8 +122,8 @@ class WriteState extends State<WritePost> {
     FocusScope.of(context).requestFocus(FocusNode());
     Navigator.pop(context);
     //soit une image soit un text
-    if ((_imageFile != null) || (_controller.text != null && _controller.text != "")){
-        FirebaseHandler().addPosttoFirebase(widget.memberId, _controller.text, _imageFile!);
+    if ((_imageFile != null) || (_controller.text != null && _controller.text != "")) {
+      FirebaseHandler().addPosttoFirebase(widget.memberId, _controller.text, _imageFile!);
     }
   }
 

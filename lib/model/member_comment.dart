@@ -4,8 +4,8 @@ import '../util/date_handler.dart';
 class MemberComment {
 
   String? memberId;
-  String? text;
-  String? date;
+  late String text;
+  late String date;
 
   MemberComment(Map<String, dynamic> map) {
     memberId = map[uidKey];
